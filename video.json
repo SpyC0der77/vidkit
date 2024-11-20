@@ -1,0 +1,17 @@
+{
+    "name": "video",
+    "format": "mp4",
+    "framerate": 30,
+    "resolution": [1920, 1080],
+    "audio": "audio.mp3",
+    "frames": [
+        {
+            "image": "frame_1.jpg",
+            "duration": 15 
+        },
+        {
+            "image": "frame_2.jpg",
+            "duration": 15 
+        }
+    ]
+}
