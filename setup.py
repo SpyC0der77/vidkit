@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="vidkit",
-    version="0.1.0",
+    version="0.1.1",
     author="Carter Stach",
     author_email="carter.stach@gmail.com",  # Replace with your email
     description="A Python package for generating videos from JSON specifications",
@@ -32,6 +32,7 @@ setup(
         "moviepy>=2.0.0",
         "Pillow>=9.2.0",
         "numpy>=1.25.0",
+        "mutagen>=1.45.0"
     ],
     keywords="video generation, json, moviepy, video editing",
 )

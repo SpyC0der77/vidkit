@@ -1,9 +1,40 @@
 import json
-from typing import Union, Dict
+from typing import Union, Dict, Any
 from moviepy.editor import VideoFileClip, ImageClip, AudioFileClip, CompositeVideoClip
 from PIL import Image
 import numpy as np
 import io
+from mutagen.mp4 import MP4, MP4FreeForm
+
+def _add_config_metadata(output_path: str, config: Dict[str, Any]) -> None:
+    """Add the configuration as metadata to the MP4 file."""
+    video = MP4(output_path)
+    config_json = json.dumps(config).encode('utf-8')
+    video["----:com.vidkit.config"] = MP4FreeForm(config_json)
+    video.save()
+
+def get_config(filepath: str) -> Dict[str, Any]:
+    """
+    Extract the configuration used to generate the video from its metadata.
+    
+    Args:
+        filepath (str): Path to the MP4 file.
+        
+    Returns:
+        dict: The configuration used to generate the video.
+        
+    Raises:
+        KeyError: If no VidKit configuration is found in the metadata.
+        ValueError: If the file is not an MP4 file or doesn't exist.
+    """
+    try:
+        video = MP4(filepath)
+        if "----:com.vidkit.config" not in video:
+            raise KeyError("No VidKit configuration found in metadata")
+        config_json = video["----:com.vidkit.config"][0]
+        return json.loads(config_json.decode('utf-8'))
+    except Exception as e:
+        raise ValueError(f"Failed to read configuration from {filepath}: {str(e)}")
 
 def renderVideo(config: Union[Dict, str]) -> bytes:
     """
@@ -49,6 +80,9 @@ def renderVideo(config: Union[Dict, str]) -> bytes:
     temp_output = "temp_output.mp4"
     video.write_videofile(temp_output, codec="libx264", fps=fps)
     
+    # Add the configuration as metadata
+    _add_config_metadata(temp_output, config)
+    
     # Read the file as bytes
     with open(temp_output, "rb") as f:
         video_bytes = f.read()
@@ -61,3 +95,14 @@ def renderVideo(config: Union[Dict, str]) -> bytes:
         audio.close()
     
     return video_bytes
+
+def saveVideo(video_bytes: bytes, output_path: str) -> None:
+    """
+    Save video bytes to a file.
+    
+    Args:
+        video_bytes (bytes): The video data in bytes format.
+        output_path (str): The path where the video should be saved.
+    """
+    with open(output_path, "wb") as f:
+        f.write(video_bytes)
