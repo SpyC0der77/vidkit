@@ -1,2 +1,4 @@
-moviepy==1.0.3
-Pillow<10
+moviepy>=2.0.0
+Pillow>=10.2.0  # Latest secure version that fixes multiple vulnerabilities
+numpy>=1.25.0
+mutagen>=1.45.0
