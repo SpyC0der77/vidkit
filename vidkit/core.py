@@ -10,7 +10,7 @@ def _add_config_metadata(output_path: str, config: Dict[str, Any]) -> None:
     """Add the configuration as metadata to the MP4 file."""
     video = MP4(output_path)
     config_json = json.dumps(config).encode('utf-8')
-    video["----:com.vidkit.config"] = MP4FreeForm(config_json)
+    video["----:mean:com.vidkit:name:config"] = MP4FreeForm(config_json)
     video.save()
 
 def get_config(filepath: str) -> Dict[str, Any]:
@@ -29,9 +29,9 @@ def get_config(filepath: str) -> Dict[str, Any]:
     """
     try:
         video = MP4(filepath)
-        if "----:com.vidkit.config" not in video:
+        if "----:mean:com.vidkit:name:config" not in video:
             raise KeyError("No VidKit configuration found in metadata")
-        config_json = video["----:com.vidkit.config"][0]
+        config_json = video["----:mean:com.vidkit:name:config"][0]
         return json.loads(config_json.decode('utf-8'))
     except Exception as e:
         raise ValueError(f"Failed to read configuration from {filepath}: {str(e)}")
