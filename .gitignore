@@ -40,3 +40,4 @@ test*.py
 *.png
 *.gif
 *.ttf
+*.pypirc
